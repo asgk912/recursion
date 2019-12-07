@@ -24,16 +24,17 @@ var stringifyJSON = function(obj) {
 	//if inputted obj is array/object
 	if(typeof obj === 'object'){
 		var keyArray = Object.keys(obj);
-		// if it is empty return empty array/object
+		// if it is empty array/object, return empty array/object string
 		if(keyArray.length === 0){
 			if(Array.isArray(obj)){
 				return returnValue + '[]'
 			} else {
 				return returnValue + '{}'
 			}
+		// if it is not empty array/object
 		} else {
 			for(var key in obj){
-				// add appropriate opening bracket at appropriate position
+				// add correct opening bracket at correct position
 				if(key === keyArray[0] && Array.isArray(obj) && !dived){
 					returnValue = '[' + returnValue;
 				} else if(key === keyArray[0] && !Array.isArray(obj) && !dived){
@@ -43,7 +44,8 @@ var stringifyJSON = function(obj) {
 				} else if(key === keyArray[0] && !Array.isArray(obj) && dived){
 					returnValue = returnValue + '{';
 				}
-				
+
+				// check if object consists of null keys and null values
 				if((key === 'undefined' && obj[key] === undefined) ||
 					(key === 'functions' && typeof obj[key] === 'function')){
 					if(key !== keyArray[keyArray.length-1]){
@@ -57,7 +59,7 @@ var stringifyJSON = function(obj) {
 					}
 				}
 
-				// check if current obj[key] is object again
+				// if current value is array/object again, and do the recursion
 				if(typeof obj[key] === 'object' && obj[key] !== null){
 					if(Array.isArray(obj)){
 						returnValue = stringifyJSON(obj[key], returnValue, true);	
@@ -67,7 +69,7 @@ var stringifyJSON = function(obj) {
 						returnValue = stringifyJSON(obj[key], returnValue, true);
 					}
 
-					// add appropriate comma or closing bracket
+					// add comma or correct closing bracket
 					if(key !== keyArray[keyArray.length-1]){
 						returnValue += ',';
 					} else {
@@ -78,6 +80,7 @@ var stringifyJSON = function(obj) {
 						}
 					}
 				} else {
+				// if current value is not array/object, just add stringify with comma or correct closing bracket
 					if(Array.isArray(obj)){
 						returnValue = stringifyJSON(obj[key], returnValue);
 						if(key !== keyArray[keyArray.length-1]){
@@ -100,8 +103,10 @@ var stringifyJSON = function(obj) {
 			return returnValue;
 		}
 	} else {
+		// handle when it is a string
 		if(typeof obj === 'string'){
 			return returnValue + '"' + obj + '"';
+		// handle when it is a number or boolean
 		} else {
 			return returnValue + obj.toString();
 		}
